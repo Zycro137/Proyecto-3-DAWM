@@ -1,4 +1,3 @@
-
 import pandas as pd
 
 # 1. Cargar el CSV
@@ -68,9 +67,6 @@ df["CustomerID"] = pd.to_numeric(
     df["CustomerID"], errors="coerce"
 ).astype("Int64")
 
-# Quantity a entero nullable
-df["Quantity"] = df["Quantity"].astype("Int64")
-
 # 5. Eliminar registros incompletos
 filas_antes = len(df)
 
@@ -94,10 +90,11 @@ df = df[
 
 eliminadas_cancelaciones = filas_antes - len(df)
 
-# 8. Eliminar devoluciones y cantidades inválidas
+# 8. Eliminar devoluciones y cantidades inválidas, luego convertir a entero
 filas_antes = len(df)
 
-df = df[df["Quantity"] > 0]
+df = df[df["Quantity"] > 0].copy()
+df["Quantity"] = df["Quantity"].astype("Int64")
 
 eliminadas_cantidades_invalidas = filas_antes - len(df)
 

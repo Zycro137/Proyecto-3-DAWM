@@ -1,4 +1,3 @@
-
 import pandas as pd
 import json
 
@@ -37,13 +36,12 @@ df["TotalPrice"] = pd.to_numeric(
     df["TotalPrice"], errors="coerce"
 )
 
-# 3. Convertir a JSON
+# 3. Convertir a JSON (minificado para mantener el peso < 100 MB)
 df.to_json(
     "ventas.json",
     orient="records",
     date_format="iso",
-    force_ascii=False,
-    indent=2
+    force_ascii=False
 )
 
 print("Archivo ventas.json generado correctamente.")

@@ -1,184 +1,685 @@
-.counter {
-  font-size: 16px;
-  padding: 5px 10px;
-  border-radius: 5px;
-  color: var(--accent);
-  background: var(--accent-bg);
-  border: 2px solid transparent;
-  transition: border-color 0.3s;
-  margin-bottom: 24px;
-
-  &:hover {
-    border-color: var(--accent-border);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
+.dashboard {
+  min-height: 100vh;
+  background: #f4f7f1;
 }
 
-.hero {
-  position: relative;
-
-  .base,
-  .framework,
-  .vite {
-    inset-inline: 0;
-    margin: 0 auto;
-  }
-
-  .base {
-    width: 170px;
-    position: relative;
-    z-index: 0;
-  }
-
-  .framework,
-  .vite {
-    position: absolute;
-  }
-
-  .framework {
-    z-index: 1;
-    top: 34px;
-    height: 28px;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(44deg) rotateY(39deg)
-      scale(1.4);
-  }
-
-  .vite {
-    z-index: 0;
-    top: 107px;
-    height: 26px;
-    width: auto;
-    transform: perspective(2000px) rotateZ(300deg) rotateX(40deg) rotateY(39deg)
-      scale(0.8);
-  }
+.dashboard-header.MuiAppBar-root {
+  color: #fff;
+  background: #217956;
 }
 
-#center {
+.dashboard-toolbar.MuiToolbar-root {
+  min-height: 54px;
+  gap: 10px;
+  padding: 7px 18px;
+}
+
+.brand-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  border-radius: 8px;
+  color: #217956;
+  background: #f5b62a;
+}
+
+.brand-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.header-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.header-title {
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.header-subtitle {
+  color: #d3e6dc;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.source-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 99px;
+  color: #e4f0e9;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.source-badge span {
+  font-size: 11px;
+}
+
+.dashboard-content {
+  width: min(100% - 40px, 1440px);
+  margin: 0 auto;
+  padding: 18px 0 24px;
+}
+
+.filter-bar {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) minmax(180px, 1.15fr) auto minmax(218px, auto);
+  align-items: end;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+  background: #fff;
+  border: 1px solid #e4eae2;
+  border-radius: 12px;
+}
+
+.filter-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filter-label {
+  color: #64746a;
+  font-size: 11px;
+}
+
+.filter-select .MuiSelect-select,
+.filter-search .MuiInputBase-input {
+  padding-top: 9px;
+  padding-bottom: 9px;
+  font-size: 12px;
+}
+
+.filter-select .MuiOutlinedInput-notchedOutline,
+.filter-search .MuiOutlinedInput-notchedOutline {
+  border-color: #e2e9e1;
+}
+
+.filter-select,
+.filter-search {
+  background: #f1f5ef;
+  border-radius: 8px;
+}
+
+.active-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.active-filters-label {
+  color: #64746a;
+  font-size: 11px;
+}
+
+.filter-chip.MuiChip-root {
+  height: 24px;
+  color: #267c5c;
+  background: #e0f2e8;
+  font-size: 10px;
+}
+
+.reset-button.MuiButton-root {
+  min-width: auto;
+  padding: 7px 9px;
+  color: #267c5c;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.kpi-card.MuiPaper-root,
+.panel.MuiPaper-root {
+  border: 1px solid #e3eae2;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+}
+
+.kpi-card.MuiPaper-root {
+  min-height: 90px;
+  padding: 12px 14px 10px;
+}
+
+.kpi-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kpi-title {
+  color: #66776c;
+  font-size: 10px;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.kpi-icon {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 8px;
+}
+
+.kpi-icon.green {
+  color: #25966b;
+  background: #dff3e8;
+}
+
+.kpi-icon.gold {
+  color: #a6710d;
+  background: #fff1cd;
+}
+
+.kpi-value {
+  margin-top: 2px;
+  color: #20372d;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+
+.kpi-subtitle {
+  margin-top: 3px;
+  color: #98a79d;
+  font-size: 10px;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.95fr) minmax(310px, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.75fr);
+  gap: 12px;
+}
+
+.panel.MuiPaper-root {
+  min-width: 0;
+  padding: 14px;
+}
+
+.panel-heading {
+  margin-bottom: 10px;
+}
+
+.panel-title {
+  color: #263a30;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.panel-subtitle {
+  margin-top: 2px;
+  color: #9aa89f;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.monthly-chart {
+  display: block;
+  width: 100%;
+  height: 228px;
+  overflow: visible;
+}
+
+.chart-grid-line {
+  stroke: #e9eee9;
+  stroke-width: 1;
+}
+
+.chart-axis-label,
+.chart-month-label {
+  fill: #8c9a90;
+  font-family: inherit;
+  font-size: 9px;
+}
+
+.chart-area {
+  fill: url(#revenueGradient);
+}
+
+.chart-line {
+  fill: none;
+  stroke: #2da978;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.chart-line-partial {
+  fill: none;
+  stroke: #2da978;
+  stroke-dasharray: 4 4;
+  stroke-linecap: round;
+  stroke-width: 2;
+}
+
+.chart-point {
+  fill: #fff;
+  stroke: #2da978;
+  stroke-width: 1.5;
+}
+
+.chart-point-max {
+  fill: #f7b82c;
+  stroke: #fff;
+  stroke-width: 2;
+}
+
+.chart-callout {
+  fill: #fff1cd;
+}
+
+.chart-callout-text {
+  fill: #9a6b0d;
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.chart-note {
+  margin-top: 3px;
+  color: #8e9d92;
+  font-size: 10px;
+}
+
+.ranking-list {
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  place-content: center;
-  place-items: center;
-  flex-grow: 1;
-
-  @media (max-width: 1024px) {
-    padding: 32px 20px 24px;
-    gap: 18px;
-  }
+  gap: 9px;
 }
 
-#next-steps {
+.ranking-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(64px, 1.15fr) auto;
+  align-items: center;
+  gap: 9px;
+}
+
+.ranking-label {
+  overflow: hidden;
+  color: #36483d;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-track {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #edf2ec;
+}
+
+.ranking-fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.ranking-fill.gold {
+  background: #f5b62a;
+}
+
+.ranking-fill.green {
+  background: #2fa374;
+}
+
+.ranking-value {
+  color: #35463c;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ranking-note {
+  margin-top: 12px;
+  padding: 8px 9px;
+  border-radius: 8px;
+  color: #986a0e;
+  background: #fff3d4;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.ranking-expand.MuiButton-root {
+  display: none;
+}
+
+.transactions-panel {
   display: flex;
-  border-top: 1px solid var(--border);
+  flex-direction: column;
+}
+
+.transaction-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
   text-align: left;
-
-  & > div {
-    flex: 1 1 0;
-    padding: 32px;
-    @media (max-width: 1024px) {
-      padding: 24px 20px;
-    }
-  }
-
-  .icon {
-    margin-bottom: 16px;
-    width: 22px;
-    height: 22px;
-  }
-
-  @media (max-width: 1024px) {
-    flex-direction: column;
-    text-align: center;
-  }
+  white-space: nowrap;
 }
 
-#docs {
-  border-right: 1px solid var(--border);
-
-  @media (max-width: 1024px) {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
+.transaction-table th {
+  padding: 8px 7px;
+  color: #617267;
+  background: #f0f4ef;
+  font-size: 10px;
+  font-weight: 500;
 }
 
-#next-steps ul {
-  list-style: none;
-  padding: 0;
+.transaction-table td {
+  padding: 8px 7px;
+  border-bottom: 1px solid #edf1ec;
+  color: #394a40;
+  font-size: 10px;
+}
+
+.transaction-table th:last-child,
+.transaction-table td:last-child {
+  text-align: right;
+}
+
+.transaction-description {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transaction-cards {
   display: flex;
-  gap: 8px;
-  margin: 32px 0 0;
+  flex-direction: column;
+}
 
-  .logo {
-    height: 18px;
+.empty-transactions {
+  padding: 28px 8px;
+  color: #718177;
+  font-size: 12px;
+  text-align: center;
+}
+
+.transaction-card {
+  padding: 13px 0;
+  border-bottom: 1px solid #e9eee8;
+}
+
+.transaction-card:last-child {
+  border-bottom: 0;
+}
+
+.transaction-card-top,
+.transaction-card-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.transaction-card-description {
+  overflow: hidden;
+  color: #34463b;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transaction-card-total {
+  color: #277c5d;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.transaction-card-meta {
+  margin-top: 4px;
+  color: #899a8f;
+  font-size: 10px;
+}
+
+.transaction-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+  color: #91a096;
+  font-size: 10px;
+}
+
+.transaction-pagination .MuiPagination-root {
+  margin-left: auto;
+}
+
+.transaction-pagination .MuiPaginationItem-root {
+  min-width: 24px;
+  height: 24px;
+  margin: 0 1px;
+  border: 1px solid #e3eae2;
+  border-radius: 6px;
+  color: #718177;
+  font-size: 10px;
+}
+
+.transaction-pagination .Mui-selected {
+  border-color: #2da978;
+  color: #fff;
+  background: #2da978;
+}
+
+.mobile-filter-button.MuiButton-root {
+  display: none;
+}
+
+.mobile-filter-summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.filter-dialog .MuiDialog-paper {
+  border-radius: 18px;
+}
+
+.filter-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 20px 20px !important;
+}
+
+.filter-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.filter-dialog-title {
+  color: #263a30;
+  font-size: 18px;
+  font-weight: 650;
+}
+
+.filter-dialog-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 0 20px 20px !important;
+}
+
+@media (max-width: 900px) {
+  .dashboard-toolbar.MuiToolbar-root {
+    min-height: 58px;
+    padding: 8px 14px;
   }
 
-  a {
-    color: var(--text-h);
-    font-size: 16px;
-    border-radius: 6px;
-    background: var(--social-bg);
+  .header-title {
+    font-size: 15px;
+  }
+
+  .header-subtitle {
+    font-size: 10px;
+  }
+
+  .source-badge {
+    display: none;
+  }
+
+  .dashboard-content {
+    width: min(100% - 28px, 680px);
+    padding-top: 14px;
+  }
+
+  .filter-bar {
+    display: none;
+  }
+
+  .mobile-filter-button.MuiButton-root {
+    display: inline-flex;
+    min-height: 40px;
+    padding: 0 14px;
+    color: #fff;
+    background: #217956;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: none;
+  }
+
+  .mobile-filter-button.MuiButton-root:hover,
+  .apply-filter-button.MuiButton-root {
+    background: #217956;
+  }
+
+  .mobile-filter-summary .filter-chip.MuiChip-root {
+    max-width: 150px;
+  }
+
+  .mobile-filter-summary .filter-chip .MuiChip-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .filter-mobile-row {
     display: flex;
-    padding: 6px 12px;
     align-items: center;
     gap: 8px;
-    text-decoration: none;
-    transition: box-shadow 0.3s;
-
-    &:hover {
-      box-shadow: var(--shadow);
-    }
-    .button-icon {
-      height: 18px;
-      width: 18px;
-    }
+    margin-bottom: 12px;
   }
 
-  @media (max-width: 1024px) {
-    margin-top: 20px;
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .charts-grid,
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .panel.MuiPaper-root {
+    padding: 14px;
+  }
+
+  .ranking-expand.MuiButton-root {
+    display: inline-flex;
+    margin: 8px 0 0 -7px;
+    padding: 4px 7px;
+    color: #27805e;
+    font-size: 11px;
+    text-transform: none;
+  }
+
+  .ranking-row {
+    grid-template-columns: minmax(0, 1fr) minmax(80px, 0.9fr) auto;
+    gap: 8px;
+  }
+
+  .ranking-list.collapsed .ranking-row:nth-child(n + 6) {
+    display: none;
+  }
+
+  .monthly-chart {
+    height: 215px;
+  }
+
+  .transactions-panel {
+    min-height: 0;
+  }
+
+  .transaction-pagination {
     flex-wrap: wrap;
     justify-content: center;
+    margin-top: 4px;
+  }
 
-    li {
-      flex: 1 1 calc(50% - 8px);
-    }
-
-    a {
-      width: 100%;
-      justify-content: center;
-      box-sizing: border-box;
-    }
+  .transaction-pagination .MuiPagination-root {
+    margin: 0;
   }
 }
 
-#spacer {
-  height: 88px;
-  border-top: 1px solid var(--border);
-  @media (max-width: 1024px) {
-    height: 48px;
-  }
-}
-
-.ticks {
-  position: relative;
-  width: 100%;
-
-  &::before,
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4.5px;
-    border: 5px solid transparent;
+@media (max-width: 420px) {
+  .dashboard-content {
+    width: calc(100% - 20px);
+    padding-top: 10px;
   }
 
-  &::before {
-    left: 0;
-    border-left-color: var(--border);
+  .kpi-card.MuiPaper-root {
+    min-height: 91px;
+    padding: 10px;
   }
-  &::after {
-    right: 0;
-    border-right-color: var(--border);
+
+  .kpi-value {
+    font-size: 19px;
+  }
+
+  .kpi-title,
+  .kpi-subtitle {
+    font-size: 9px;
+  }
+
+  .panel.MuiPaper-root {
+    padding: 12px;
+  }
+
+  .monthly-chart {
+    height: 190px;
+  }
+
+  .ranking-label,
+  .ranking-value {
+    font-size: 9px;
+  }
+
+  .mobile-filter-summary .filter-chip.MuiChip-root {
+    max-width: 125px;
+    font-size: 9px;
   }
 }
