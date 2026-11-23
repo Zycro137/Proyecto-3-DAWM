@@ -37,5 +37,5 @@ actualizan con los filtros. Los registros de cancelación o devolución y las
 cantidades o precios no positivos se excluyen del análisis; los clientes sin
 `CustomerID` no se cuentan en el KPI de clientes únicos.
 
-La carpeta de Google Drive con los archivos fuente y respaldos está
+La carpeta de Google Drive con los archivos CSV originales y respaldos está
 [disponible aquí](https://drive.google.com/drive/folders/1bYsEoScXeVjIxsfE1BKLsto5eJo6GlyS?usp=sharing).
