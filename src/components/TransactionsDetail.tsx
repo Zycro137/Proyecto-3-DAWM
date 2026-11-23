@@ -70,7 +70,7 @@ export function TransactionsDetail({
                   <td>{record.quantity}</td>
                   <td>{formatCurrency(record.unitPrice)}</td>
                   <td>{record.country}</td>
-                  <td>{formatCurrency(record.quantity * record.unitPrice)}</td>
+                  <td>{formatCurrency(record.totalPrice)}</td>
                 </tr>
               ))}
             </tbody>
@@ -80,19 +80,29 @@ export function TransactionsDetail({
 
       <div className="transaction-pagination">
         <span>
-          Mostrando {visibleStart}–{visibleEnd} de {records.length} registros de ejemplo
+          Mostrando {visibleStart}–{visibleEnd} de{' '}
+          {records.length.toLocaleString('en-GB')} registros
         </span>
-        <Pagination
-          count={pageCount}
-          page={page}
-          onChange={(_, newPage) => setPage(newPage)}
-          size="small"
-          siblingCount={isMobile ? 0 : 1}
-          boundaryCount={1}
-          hideNextButton={false}
-          hidePrevButton={false}
-          aria-label="Paginación de transacciones"
-        />
+        {records.length > 0 ? (
+          <Pagination
+            count={pageCount}
+            page={page}
+            onChange={(_, newPage) => setPage(newPage)}
+            size="small"
+            siblingCount={isMobile ? 0 : 1}
+            boundaryCount={1}
+            getItemAriaLabel={(type, pageNumber, selected) => {
+              if (type === 'page') {
+                return `Ir a la página ${pageNumber}${selected ? ', actual' : ''}`;
+              }
+              if (type === 'first') return 'Ir a la primera página';
+              if (type === 'last') return 'Ir a la última página';
+              if (type === 'next') return 'Ir a la página siguiente';
+              return 'Ir a la página anterior';
+            }}
+            aria-label="Paginación de transacciones"
+          />
+        ) : null}
       </div>
     </Paper>
   );
@@ -104,7 +114,7 @@ function TransactionCard({ record }: { record: Transaction }) {
       <div className="transaction-card-top">
         <div className="transaction-card-description">{record.description}</div>
         <div className="transaction-card-total">
-          {formatCurrency(record.quantity * record.unitPrice)}
+          {formatCurrency(record.totalPrice)}
         </div>
       </div>
       <div className="transaction-card-meta">
@@ -120,11 +130,16 @@ function TransactionCard({ record }: { record: Transaction }) {
 }
 
 function formatCurrency(value: number) {
-  return `£${value.toFixed(2)}`;
+  return new Intl.NumberFormat('en-GB', {
+    style: 'currency',
+    currency: 'GBP',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 3,
+  }).format(value);
 }
 
 function formatDate(value: string) {
-  const [date, time] = value.split(' ');
+  const [date, time] = value.split('T');
   const [year, month, day] = date.split('-');
-  return `${day}/${month}/${year} ${time}`;
+  return `${day}/${month}/${year} ${time.slice(0, 5)}`;
 }

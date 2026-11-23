@@ -69,6 +69,16 @@
   padding: 18px 0 24px;
 }
 
+.dashboard-loading {
+  display: flex;
+  min-height: 220px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #718177;
+  font-size: 13px;
+}
+
 .filter-bar {
   display: grid;
   grid-template-columns: minmax(150px, 1fr) minmax(150px, 1fr) minmax(180px, 1.15fr) auto minmax(218px, auto);

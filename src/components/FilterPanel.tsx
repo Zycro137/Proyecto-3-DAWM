@@ -30,7 +30,7 @@ type FilterPanelProps = {
 };
 
 const dateRanges: { value: DashboardFilters['dateRange']; label: string }[] = [
-  { value: 'all', label: 'Dic 2010 – Dic 2011' },
+  { value: 'all', label: 'Todo el periodo disponible' },
   { value: '2010', label: 'Año 2010' },
   { value: '2011', label: 'Año 2011' },
   { value: '2010-12', label: 'Dic 2010' },

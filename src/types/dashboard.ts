@@ -23,11 +23,36 @@ export type MonthlyRevenue = {
   value: number;
 };
 
+export type SaleRecord = {
+  InvoiceNo: string;
+  StockCode: string;
+  Description: string;
+  Quantity: number;
+  InvoiceDate: string;
+  UnitPrice: number;
+  CustomerID: number | null;
+  Country: string;
+  TotalPrice: number;
+};
+
 export type Transaction = {
   invoice: string;
   date: string;
   description: string;
   quantity: number;
   unitPrice: number;
+  totalPrice: number;
   country: string;
+};
+
+export type DashboardData = {
+  countries: string[];
+  kpis: Kpi[];
+  monthlyRevenue: MonthlyRevenue[];
+  countryRankings: RankingItem[];
+  productRankings: RankingItem[];
+  transactions: Transaction[];
+  datasetDateRangeLabel: string;
+  partialDataNote: string;
+  unitedKingdomShare: number;
 };

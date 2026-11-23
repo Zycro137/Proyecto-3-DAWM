@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { Alert, Button, CircularProgress } from '@mui/material';
 import { useMediaQuery, useTheme } from '@mui/material';
 import { FilterPanel } from './components/FilterPanel';
 import { Header } from './components/Header';
@@ -6,15 +7,8 @@ import { HorizontalRankingChart } from './components/HorizontalRankingChart';
 import { KpiCard } from './components/KpiCard';
 import { MonthlyRevenueChart } from './components/MonthlyRevenueChart';
 import { TransactionsDetail } from './components/TransactionsDetail';
-import {
-  countries,
-  countryRankings,
-  kpis,
-  monthlyRevenue,
-  productRankings,
-  transactions,
-} from './data/dashboardData';
-import type { DashboardFilters } from './types/dashboard';
+import { calculateDashboardData, loadSalesRecords } from './data/analytics';
+import type { DashboardFilters, SaleRecord } from './types/dashboard';
 import './App.css';
 
 const initialFilters: DashboardFilters = {
@@ -28,36 +22,38 @@ function App() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
+  const [salesRecords, setSalesRecords] = useState<SaleRecord[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [retryToken, setRetryToken] = useState(0);
 
-  const filteredTransactions = useMemo(() => {
-    const query = filters.product.trim().toLocaleLowerCase();
+  useEffect(() => {
+    const controller = new AbortController();
 
-    return transactions.filter((transaction) => {
-      const countryMatches =
-        !filters.country || transaction.country === filters.country;
-      const productMatches =
-        !query || transaction.description.toLocaleLowerCase().includes(query);
-      const year = transaction.date.slice(0, 4);
-      const month = transaction.date.slice(5, 7);
-      const dateMatches =
-        filters.dateRange === 'all' ||
-        (filters.dateRange === '2010' && year === '2010') ||
-        (filters.dateRange === '2011' && year === '2011') ||
-        (filters.dateRange === '2010-12' && transaction.date.startsWith('2010-12')) ||
-        (filters.dateRange === '2011-01-03' &&
-          year === '2011' &&
-          Number(month) >= 1 &&
-          Number(month) <= 3);
+    loadSalesRecords(controller.signal)
+      .then(setSalesRecords)
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return;
+        setLoadError(
+          error instanceof Error
+            ? error.message
+            : 'Ocurrió un error inesperado al cargar las ventas.',
+        );
+      });
 
-      return countryMatches && productMatches && dateMatches;
-    });
-  }, [filters]);
+    return () => controller.abort();
+  }, [retryToken]);
+
+  const dashboardData = useMemo(
+    () =>
+      salesRecords === null
+        ? null
+        : calculateDashboardData(salesRecords, filters),
+    [salesRecords, filters],
+  );
 
   const activeFilters = [
     filters.country ? `País: ${filters.country}` : 'País: Todos',
-    filters.dateRange === 'all'
-      ? 'Fechas: Dic 2010 – Dic 2011'
-      : `Fechas: ${getDateRangeLabel(filters.dateRange)}`,
+    `Fechas: ${getDateRangeLabel(filters.dateRange)}`,
   ];
 
   const updateFilter = <K extends keyof DashboardFilters>(
@@ -67,15 +63,17 @@ function App() {
     setFilters((current) => ({ ...current, [key]: value }));
   };
 
-  const resetFilters = () => setFilters(initialFilters);
+  const resetFilters = () => setFilters({ ...initialFilters });
 
   return (
     <div className="dashboard">
-      <Header />
+      <Header
+        dateRange={dashboardData?.datasetDateRangeLabel ?? 'Cargando fechas…'}
+      />
 
       <main className="dashboard-content">
         <FilterPanel
-          countries={countries}
+          countries={dashboardData?.countries ?? []}
           filters={filters}
           activeFilters={activeFilters}
           isMobile={isMobile}
@@ -86,38 +84,75 @@ function App() {
           onReset={resetFilters}
         />
 
-        <section className="kpi-grid" aria-label="Indicadores clave">
-          {kpis.map((kpi) => (
-            <KpiCard key={kpi.title} {...kpi} />
-          ))}
-        </section>
+        {loadError ? (
+          <Alert
+            severity="error"
+            action={
+              <Button
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setLoadError(null);
+                  setSalesRecords(null);
+                  setRetryToken((current) => current + 1);
+                }}
+              >
+                Reintentar
+              </Button>
+            }
+          >
+            {loadError}
+          </Alert>
+        ) : dashboardData === null ? (
+          <div className="dashboard-loading" role="status">
+            <CircularProgress size={24} />
+            <span>Cargando y validando los registros de ventas…</span>
+          </div>
+        ) : (
+          <>
+            <section className="kpi-grid" aria-label="Indicadores clave">
+              {dashboardData.kpis.map((kpi) => (
+                <KpiCard key={kpi.title} {...kpi} />
+              ))}
+            </section>
 
-        <section className="charts-grid" aria-label="Resumen de ventas">
-          <MonthlyRevenueChart data={monthlyRevenue} />
-          <HorizontalRankingChart
-            title="Ingresos por país (sin Reino Unido)"
-            subtitle="Top 10 · suma de TotalVenta por Country"
-            items={countryRankings}
-            barColor="gold"
-            footerNote="Reino Unido concentra el 82% de los ingresos (£7.3 M) y se excluye para poder comparar el resto."
-            isMobile={isMobile}
-          />
-        </section>
+            <section className="charts-grid" aria-label="Resumen de ventas">
+              <MonthlyRevenueChart
+                data={dashboardData.monthlyRevenue}
+                partialDataNote={dashboardData.partialDataNote}
+              />
+              <HorizontalRankingChart
+                title="Ingresos por país (sin Reino Unido)"
+                subtitle="Top 10 · suma de TotalPrice por país"
+                items={dashboardData.countryRankings}
+                barColor="gold"
+                footerNote={
+                  filters.country === 'United Kingdom'
+                    ? 'El Reino Unido se excluye de esta clasificación.'
+                    : !filters.country && dashboardData.unitedKingdomShare > 0
+                      ? `Reino Unido representa el ${dashboardData.unitedKingdomShare.toFixed(1)}% de los ingresos y se excluye para comparar el resto.`
+                      : undefined
+                }
+                isMobile={isMobile}
+              />
+            </section>
 
-        <section className="details-grid" aria-label="Detalle y productos">
-          <HorizontalRankingChart
-            title="Top 10 productos más vendidos"
-            subtitle="Unidades vendidas (Quantity) por Description"
-            items={productRankings}
-            barColor="green"
-            isMobile={isMobile}
-          />
-          <TransactionsDetail
-            key={`${filters.country}:${filters.dateRange}:${filters.product}:${isMobile}`}
-            records={filteredTransactions}
-            isMobile={isMobile}
-          />
-        </section>
+            <section className="details-grid" aria-label="Detalle y productos">
+              <HorizontalRankingChart
+                title="Top 10 productos más vendidos"
+                subtitle="Unidades vendidas por descripción"
+                items={dashboardData.productRankings}
+                barColor="green"
+                isMobile={isMobile}
+              />
+              <TransactionsDetail
+                key={`${filters.country}:${filters.dateRange}:${filters.product}:${isMobile}`}
+                records={dashboardData.transactions}
+                isMobile={isMobile}
+              />
+            </section>
+          </>
+        )}
       </main>
     </div>
   );
@@ -134,7 +169,7 @@ function getDateRangeLabel(value: DashboardFilters['dateRange']) {
     case '2011-01-03':
       return 'Ene – Mar 2011';
     default:
-      return 'Dic 2010 – Dic 2011';
+      return 'Todo el periodo';
   }
 }
 

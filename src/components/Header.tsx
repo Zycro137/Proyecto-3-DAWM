@@ -1,6 +1,10 @@
 import { AppBar, Box, Toolbar } from '@mui/material';
 
-export function Header() {
+type HeaderProps = {
+  dateRange: string;
+};
+
+export function Header({ dateRange }: HeaderProps) {
   return (
     <AppBar position="static" elevation={0} className="dashboard-header">
       <Toolbar className="dashboard-toolbar">
@@ -19,7 +23,7 @@ export function Header() {
         <div className="header-copy">
           <div className="header-title">Panel de ventas · Online Retail</div>
           <div className="header-subtitle">
-            Tienda en línea del Reino Unido · 01/12/2010 al 09/12/2011
+            Tienda en línea del Reino Unido · {dateRange}
           </div>
         </div>
         <div className="source-badge">

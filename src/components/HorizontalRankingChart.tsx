@@ -20,7 +20,7 @@ export function HorizontalRankingChart({
   isMobile,
 }: HorizontalRankingChartProps) {
   const [expanded, setExpanded] = useState(false);
-  const maxValue = Math.max(...items.map((item) => item.value));
+  const maxValue = Math.max(0, ...items.map((item) => item.value));
   const visibleItems = isMobile && !expanded ? items.slice(0, 5) : items;
 
   return (
@@ -29,31 +29,37 @@ export function HorizontalRankingChart({
         <div className="panel-title">{title}</div>
         <div className="panel-subtitle">{subtitle}</div>
       </div>
-      <div className={`ranking-list${isMobile && !expanded ? ' collapsed' : ''}`}>
-        {visibleItems.map((item) => (
-          <div className="ranking-row" key={item.label}>
-            <span className="ranking-label" title={item.label}>
-              {item.label}
-            </span>
-            <div
-              className="ranking-track"
-              role="meter"
-              aria-label={item.label}
-              aria-valuemin={0}
-              aria-valuemax={maxValue}
-              aria-valuenow={item.value}
-            >
+      {items.length > 0 ? (
+        <div className={`ranking-list${isMobile && !expanded ? ' collapsed' : ''}`}>
+          {visibleItems.map((item) => (
+            <div className="ranking-row" key={item.label}>
+              <span className="ranking-label" title={item.label}>
+                {item.label}
+              </span>
               <div
-                className={`ranking-fill ${barColor}`}
-                style={{ width: `${(item.value / maxValue) * 100}%` }}
-              />
+                className="ranking-track"
+                role="meter"
+                aria-label={item.label}
+                aria-valuemin={0}
+                aria-valuemax={maxValue}
+                aria-valuenow={item.value}
+              >
+                <div
+                  className={`ranking-fill ${barColor}`}
+                  style={{ width: `${(item.value / maxValue) * 100}%` }}
+                />
+              </div>
+              <span className="ranking-value">{item.formattedValue}</span>
             </div>
-            <span className="ranking-value">{item.formattedValue}</span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="empty-transactions" role="status">
+          No hay datos para mostrar con estos filtros.
+        </div>
+      )}
       {footerNote ? <div className="ranking-note">{footerNote}</div> : null}
-      {isMobile ? (
+      {isMobile && items.length > 5 ? (
         <Button
           className="ranking-expand"
           onClick={() => setExpanded((current) => !current)}
