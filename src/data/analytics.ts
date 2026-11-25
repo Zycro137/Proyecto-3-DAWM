@@ -6,6 +6,7 @@ import type {
   SaleRecord,
   Transaction,
 } from '../types/dashboard';
+import { fetchSalesFromRealtimeDatabase } from './firebaseSales';
 
 const dateFormatter = new Intl.DateTimeFormat('es', {
   day: '2-digit',
@@ -23,25 +24,8 @@ const currencyFormatter = new Intl.NumberFormat('en-GB', {
 
 const numberFormatter = new Intl.NumberFormat('en-GB');
 
-export async function loadSalesRecords(signal?: AbortSignal): Promise<SaleRecord[]> {
-  const response = await fetch(`${import.meta.env.BASE_URL}data/ventas.json`, {
-    signal,
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `No se pudo cargar ventas.json (HTTP ${response.status}). Comprueba que el archivo esté disponible en Scripts/ventas.json.`,
-    );
-  }
-
-  const payload: unknown = await response.json();
-  if (!Array.isArray(payload)) {
-    throw new Error('El archivo ventas.json debe contener una lista de registros.');
-  }
-
-  return payload
-    .map((record: unknown, index: number) => validateSaleRecord(record, index))
-    .filter(isSale);
+export async function loadSalesRecords(): Promise<SaleRecord[]> {
+  return fetchSalesFromRealtimeDatabase('/');
 }
 
 export function calculateDashboardData(
@@ -169,56 +153,6 @@ export function calculateDashboardData(
     unitedKingdomShare:
       totalRevenue > 0 ? (unitedKingdomRevenue / totalRevenue) * 100 : 0,
   };
-}
-
-function validateSaleRecord(value: unknown, index: number): SaleRecord {
-  if (
-    typeof value !== 'object' ||
-    value === null ||
-    !('InvoiceNo' in value) ||
-    !('StockCode' in value) ||
-    !('Description' in value) ||
-    !('Quantity' in value) ||
-    !('InvoiceDate' in value) ||
-    !('UnitPrice' in value) ||
-    !('CustomerID' in value) ||
-    !('Country' in value) ||
-    !('TotalPrice' in value)
-  ) {
-    throw new Error(`El registro ${index + 1} de ventas.json tiene campos inválidos.`);
-  }
-
-  const record = value as Record<string, unknown>;
-  const valid =
-    typeof record.InvoiceNo === 'string' &&
-    typeof record.StockCode === 'string' &&
-    typeof record.Description === 'string' &&
-    typeof record.Quantity === 'number' &&
-    Number.isFinite(record.Quantity) &&
-    typeof record.InvoiceDate === 'string' &&
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(record.InvoiceDate) &&
-    typeof record.UnitPrice === 'number' &&
-    Number.isFinite(record.UnitPrice) &&
-    (record.CustomerID === null ||
-      (typeof record.CustomerID === 'number' &&
-        Number.isFinite(record.CustomerID))) &&
-    typeof record.Country === 'string' &&
-    typeof record.TotalPrice === 'number' &&
-    Number.isFinite(record.TotalPrice);
-
-  if (!valid) {
-    throw new Error(`El registro ${index + 1} de ventas.json tiene valores inválidos.`);
-  }
-
-  return record as SaleRecord;
-}
-
-function isSale(record: SaleRecord) {
-  return (
-    !record.InvoiceNo.startsWith('C') &&
-    record.Quantity > 0 &&
-    record.UnitPrice > 0
-  );
 }
 
 function matchesDateRange(

@@ -23,24 +23,37 @@ function App() {
   const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const [salesRecords, setSalesRecords] = useState<SaleRecord[] | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryToken, setRetryToken] = useState(0);
 
   useEffect(() => {
-    const controller = new AbortController();
+    let isActive = true;
+    setIsLoading(true);
+    setLoadError(null);
 
-    loadSalesRecords(controller.signal)
-      .then(setSalesRecords)
+    loadSalesRecords()
+      .then((records) => {
+        if (!isActive) return;
+        setSalesRecords(records);
+      })
       .catch((error: unknown) => {
-        if (controller.signal.aborted) return;
+        if (!isActive) return;
         setLoadError(
           error instanceof Error
             ? error.message
-            : 'Ocurrió un error inesperado al cargar las ventas.',
+            : 'Ocurrió un error inesperado al cargar las ventas desde Firebase.',
         );
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsLoading(false);
+        }
       });
 
-    return () => controller.abort();
+    return () => {
+      isActive = false;
+    };
   }, [retryToken]);
 
   const dashboardData = useMemo(
@@ -103,10 +116,10 @@ function App() {
           >
             {loadError}
           </Alert>
-        ) : dashboardData === null ? (
+        ) : isLoading || dashboardData === null ? (
           <div className="dashboard-loading" role="status">
             <CircularProgress size={24} />
-            <span>Cargando y validando los registros de ventas…</span>
+            <span>Cargando registros de ventas desde Firebase…</span>
           </div>
         ) : (
           <>
