@@ -23,14 +23,11 @@ function App() {
   const [filters, setFilters] = useState<DashboardFilters>(initialFilters);
   const [filterDialogOpen, setFilterDialogOpen] = useState(false);
   const [salesRecords, setSalesRecords] = useState<SaleRecord[] | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [retryToken, setRetryToken] = useState(0);
 
   useEffect(() => {
     let isActive = true;
-    setIsLoading(true);
-    setLoadError(null);
 
     loadSalesRecords()
       .then((records) => {
@@ -44,11 +41,6 @@ function App() {
             ? error.message
             : 'Ocurrió un error inesperado al cargar las ventas desde Firebase.',
         );
-      })
-      .finally(() => {
-        if (isActive) {
-          setIsLoading(false);
-        }
       });
 
     return () => {
@@ -116,7 +108,7 @@ function App() {
           >
             {loadError}
           </Alert>
-        ) : isLoading || dashboardData === null ? (
+        ) : dashboardData === null ? (
           <div className="dashboard-loading" role="status">
             <CircularProgress size={24} />
             <span>Cargando registros de ventas desde Firebase…</span>
