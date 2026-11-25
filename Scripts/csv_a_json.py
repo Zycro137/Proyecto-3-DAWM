@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-
+#prueba ola
 # 1. Leer el CSV limpio
 df = pd.read_csv(
     "ventas_limpias.csv",
